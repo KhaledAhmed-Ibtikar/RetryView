@@ -1,0 +1,2 @@
+include ':sample', 'retryview'
+rootProject.name = "RetryView"

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="RetryView">
+        <attr format="reference" name="layoutId"/>
+        <attr format="reference" name="imageSrc"/>
+        <attr format="reference|string" name="messageText"/>
+        <attr format="reference|color" name="messageTextColor"/>
+        <attr format="reference|dimension" name="messageTextSize"/>
+        <attr format="reference|string" name="buttonText"/>
+        <attr format="reference|dimension" name="buttonTextSize"/>
+        <attr format="reference|color" name="buttonTextColor"/>
+        <attr format="reference|color" name="buttonBackgroundColor"/>
+    </declare-styleable>
+
+</resources>
