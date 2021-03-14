@@ -10,7 +10,7 @@ import sa.ibtikar.retryview.databinding.FragmentMainBinding
 import sa.ibtikar.retryview.utils.RetryFragment
 
 
-class MainFragment : RetryFragment() {
+class MainFragment : RetryFragment(), OnRetryClickListener {
 
     private lateinit var binder: FragmentMainBinding
 
@@ -28,15 +28,23 @@ class MainFragment : RetryFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binder.retryView.initWith(this)
+
+        binder.retryView.setOnRetryClickListener(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        callWithRetry { doSomething() }
+        doSomething()
+
+//        callWithRetry { doSomething() }
     }
 
     private fun doSomething() {
         Toast.makeText(context, "Function Called", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRetryClick() {
+        doSomething()
     }
 }

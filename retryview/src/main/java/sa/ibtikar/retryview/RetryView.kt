@@ -7,11 +7,9 @@ package sa.ibtikar.retryview
  */
 import android.content.Context
 import android.util.AttributeSet
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
-import androidx.core.content.ContextCompat
 import sa.ibtikar.retryview.databinding.RetryViewBinding
 import sa.ibtikar.retryview.utils.RetryActivity
 import sa.ibtikar.retryview.utils.RetryFragment
@@ -47,6 +45,7 @@ open class RetryView @JvmOverloads constructor(
 
     private var parentFragment: RetryFragment? = null
     private var parentActivity: RetryActivity? = null
+    private var onRetryClickListener: OnRetryClickListener? = null
 
     init {
         init(attrs)
@@ -107,8 +106,13 @@ open class RetryView @JvmOverloads constructor(
                 btnRetry.backgroundTintList = ContextCompat.getColorStateList(context, R.color.blue)
 
                 btnRetry.setSafeOnClickListener {
-                    parentFragment?.getLatestCalledFunction()?.invoke()
-                    parentActivity?.getLatestCalledFunction()?.invoke()
+                    if (onRetryClickListener != null) {
+                        onRetryClickListener?.onRetryClick()
+                    } else {
+                        parentFragment?.getLatestCalledFunction()?.invoke()
+                        parentActivity?.getLatestCalledFunction()?.invoke()
+                    }
+
                 }
             }
 
@@ -116,8 +120,12 @@ open class RetryView @JvmOverloads constructor(
             View.inflate(context, layoutId, this)
 
             findViewById<View>(R.id.btn_retry)?.setSafeOnClickListener {
-                parentFragment?.getLatestCalledFunction()?.invoke()
-                parentActivity?.getLatestCalledFunction()?.invoke()
+                if (onRetryClickListener != null) {
+                    onRetryClickListener?.onRetryClick()
+                } else {
+                    parentFragment?.getLatestCalledFunction()?.invoke()
+                    parentActivity?.getLatestCalledFunction()?.invoke()
+                }
             }
         }
     }
@@ -130,4 +138,12 @@ open class RetryView @JvmOverloads constructor(
     fun initWith(parentActivity: RetryActivity) {
         this.parentActivity = parentActivity
     }
+
+    fun setOnRetryClickListener(onRetryClickListener: OnRetryClickListener) {
+        this.onRetryClickListener = onRetryClickListener
+    }
+}
+
+interface OnRetryClickListener {
+    fun onRetryClick()
 }
