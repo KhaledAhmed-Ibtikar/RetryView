@@ -6,11 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import sa.ibtikar.retryview.databinding.FragmentMainBinding
-import sa.ibtikar.retryview.utils.RetryFragment
 
 
-class MainFragment : RetryFragment(), OnRetryClickListener {
+class MainFragment : Fragment() {
 
     private lateinit var binder: FragmentMainBinding
 
@@ -26,25 +26,12 @@ class MainFragment : RetryFragment(), OnRetryClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binder.retryView.initWith(this)
-
-        binder.retryView.setOnRetryClickListener(this)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        doSomething()
-
-//        callWithRetry { doSomething() }
+        binder.retryView.callWithRetry {
+            doSomething()
+        }
     }
 
     private fun doSomething() {
         Toast.makeText(context, "Function Called", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onRetryClick() {
-        doSomething()
     }
 }

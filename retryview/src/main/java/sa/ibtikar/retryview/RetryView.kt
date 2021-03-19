@@ -11,8 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import sa.ibtikar.retryview.databinding.RetryViewBinding
-import sa.ibtikar.retryview.utils.RetryActivity
-import sa.ibtikar.retryview.utils.RetryFragment
 import sa.ibtikar.retryview.utils.setSafeOnClickListener
 
 
@@ -42,10 +40,7 @@ open class RetryView @JvmOverloads constructor(
     private var buttonTextSize: Int = defaultButtonTextSize
     private var buttonTextColor: Int = defaultButtonTextColor
     private var buttonBackgroundColor: Int = defaultButtonBackgroundColor
-
-    private var parentFragment: RetryFragment? = null
-    private var parentActivity: RetryActivity? = null
-    private var onRetryClickListener: OnRetryClickListener? = null
+    private var calledBlock: (() -> Any)? = null
 
     init {
         init(attrs)
@@ -92,27 +87,21 @@ open class RetryView @JvmOverloads constructor(
             with(binder) {
                 ivAlert.setImageResource(imageSrc)
                 tvAlert.text = context.getString(messageText)
-                tvAlert.setTextColor(ContextCompat.getColor(context, messageTextColor))
+                tvAlert.setTextColor(androidx.core.content.ContextCompat.getColor(context, messageTextColor))
                 tvAlert.setTextSize(
-                    TypedValue.COMPLEX_UNIT_PX,
+                    android.util.TypedValue.COMPLEX_UNIT_PX,
                     resources.getDimension(R.dimen.retry_message_text_size)
                 )
                 btnRetry.text = context.getString(buttonText)
                 btnRetry.setTextSize(
-                    TypedValue.COMPLEX_UNIT_PX,
+                    android.util.TypedValue.COMPLEX_UNIT_PX,
                     resources.getDimension(R.dimen.retry_button_text_size)
                 )
-                btnRetry.setTextColor(ContextCompat.getColor(context, buttonTextColor))
-                btnRetry.backgroundTintList = ContextCompat.getColorStateList(context, R.color.blue)
+                btnRetry.setTextColor(androidx.core.content.ContextCompat.getColor(context, buttonTextColor))
+                btnRetry.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(context, R.color.blue)
 
                 btnRetry.setSafeOnClickListener {
-                    if (onRetryClickListener != null) {
-                        onRetryClickListener?.onRetryClick()
-                    } else {
-                        parentFragment?.getLatestCalledFunction()?.invoke()
-                        parentActivity?.getLatestCalledFunction()?.invoke()
-                    }
-
+                    calledLambdaBlock?.invoke()
                 }
             }
 
@@ -120,30 +109,12 @@ open class RetryView @JvmOverloads constructor(
             View.inflate(context, layoutId, this)
 
             findViewById<View>(R.id.btn_retry)?.setSafeOnClickListener {
-                if (onRetryClickListener != null) {
-                    onRetryClickListener?.onRetryClick()
-                } else {
-                    parentFragment?.getLatestCalledFunction()?.invoke()
-                    parentActivity?.getLatestCalledFunction()?.invoke()
-                }
+                calledBlock?.invoke()
             }
         }
     }
 
-
-    fun initWith(parentFragment: RetryFragment) {
-        this.parentFragment = parentFragment
+    fun callWithRetry(block : () -> Unit) {
+        calledBlock = block
     }
-
-    fun initWith(parentActivity: RetryActivity) {
-        this.parentActivity = parentActivity
-    }
-
-    fun setOnRetryClickListener(onRetryClickListener: OnRetryClickListener) {
-        this.onRetryClickListener = onRetryClickListener
-    }
-}
-
-interface OnRetryClickListener {
-    fun onRetryClick()
 }
